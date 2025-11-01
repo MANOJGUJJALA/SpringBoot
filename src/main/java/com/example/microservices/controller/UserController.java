@@ -18,6 +18,7 @@ public class UserController {
 
     @GetMapping("/")
     public ResponseEntity <List<User>> getUsers(){
+        System.out.println("Request in Controller");
         return ResponseEntity.ok(userRepository.findAll());
     }
 
