@@ -1,6 +1,8 @@
 package com.example.microservices.config;
 
+import com.example.microservices.filter.JWtAuthFilter;
 import com.example.microservices.service.CustomUserServiceDetails;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -21,6 +24,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Autowired
+    JWtAuthFilter jWtAuthFilter;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -28,8 +34,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/auth").permitAll()
                         .anyRequest().authenticated())
+                .addFilterBefore(jWtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-                .httpBasic(withDefaults());
+
+//                .httpBasic(withDefaults());
 //                .anyRequest("/h2-console/**").permitAll() ;// Allow access to H2 console
 //                .anyRequest().authenticated()
 //                .and()

@@ -1,9 +1,11 @@
 package com.example.microservices.util;
 
 import com.example.microservices.dto.AuthRequest;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -23,8 +25,21 @@ public class JWTutil {
                 .setExpiration(new Date(System.currentTimeMillis()+EXPIRATION_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
         .compact();
-
-
     }
 
+    public String extractUserNameFromToken(String token){
+        return extractClaimsbody(token).getSubject();
+    }
+
+    public Claims extractClaimsbody(String token){
+       return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean validateToken(String token) {
+       return !extractClaimsbody(token).getExpiration().before(new Date());
+    }
 }
