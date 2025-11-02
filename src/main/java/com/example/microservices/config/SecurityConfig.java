@@ -32,7 +32,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/auth").permitAll()
+                        .requestMatchers("/download/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jWtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
